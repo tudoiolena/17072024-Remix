@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  remix:
+    build:
+      context: ./docker/node
+      args:
+        - UID=1000
+        - GID=1000
+        - USER_NAME=dev
+    user: 1000:1000
+    volumes:
+      - ./source:/app
+    ports:
+      - 3000:3000
+    command:
+      - npm
+      - run
+      - dev
