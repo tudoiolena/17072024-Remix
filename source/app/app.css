@@ -395,3 +395,11 @@ i {
   justify-content: center;
   width: 100%;
 }
+
+#posts-container {
+  list-style: none;
+}
+
+#post-body {
+  margin: 0;
+}

@@ -63,6 +63,10 @@ export default function Contact() {
             <button type="submit">Edit</button>
           </Form>
 
+          <Form action="posts">
+            <button type="submit">Posts</button>
+          </Form>
+
           <Form
             action="destroy"
             method="post"

@@ -74,6 +74,18 @@ export async function createEmptyContact(): Promise<ContactRecord> {
   return createContact(emptyContactData);
 }
 
+export async function getUserPosts(id: number) {
+  const response = await fetch(new URL(`users/${id}/posts/`, API_URL));
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch posts: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  console.log("data", data.posts);
+  return data.posts;
+}
+
 export async function updateContact(
   id: number,
   updates: ContactMutation
