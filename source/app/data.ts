@@ -2,7 +2,7 @@ import { matchSorter } from "match-sorter";
 import sortBy from "sort-by";
 
 type ContactMutation = {
-  id?: number;
+  id?: string;
   firstName?: string;
   lastName?: string;
   image?: string;
@@ -12,8 +12,18 @@ type ContactMutation = {
 };
 
 export type ContactRecord = ContactMutation & {
-  id: number;
+  id: string;
   createdAt: string;
+};
+
+type TPost = {
+  id: number;
+  title: string;
+  body: string;
+  tags: string[];
+  reactions: Record<string, number>;
+  views: number;
+  userId: number;
 };
 
 const API_URL = "https://dummyjson.com/";
@@ -40,7 +50,7 @@ export async function getContacts(
   return filteredContacts.sort(sortBy("lastName", "createdAt"));
 }
 
-export async function getContact(id: number): Promise<ContactRecord> {
+export async function getContact(id: string): Promise<ContactRecord> {
   const response = await fetch(new URL(`users/${id}`, API_URL));
   const data = await response.json();
   return data;
@@ -74,7 +84,7 @@ export async function createEmptyContact(): Promise<ContactRecord> {
   return createContact(emptyContactData);
 }
 
-export async function getUserPosts(id: number) {
+export async function getUserPosts(id: string): Promise<TPost[]> {
   const response = await fetch(new URL(`users/${id}/posts/`, API_URL));
 
   if (!response.ok) {
@@ -82,12 +92,22 @@ export async function getUserPosts(id: number) {
   }
 
   const data = await response.json();
-  console.log("data", data.posts);
   return data.posts;
 }
 
+export async function getPostById(postId: string): Promise<TPost> {
+  const response = await fetch(new URL(`posts/${postId}`, API_URL));
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch post: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 export async function updateContact(
-  id: number,
+  id: string,
   updates: ContactMutation
 ): Promise<ContactRecord> {
   const response = await fetch(`${API_URL}${id}`, {
@@ -102,7 +122,7 @@ export async function updateContact(
   return await response.json();
 }
 
-export async function deleteContact(id: number): Promise<number> {
+export async function deleteContact(id: string): Promise<string> {
   const response = await fetch(`${API_URL}${id}`, {
     method: "DELETE",
   });
