@@ -28,14 +28,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export const action = async () => {
-  const contact = await createEmptyContact({
-    firstName: "",
-    lastName: "",
-    image: "",
-    twitter: "",
-    notes: "",
-    favorite: false,
-  });
+  const contact = await createEmptyContact();
   return redirect(`/contacts/${contact.id}/edit`);
 };
 

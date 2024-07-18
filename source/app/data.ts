@@ -2,7 +2,7 @@ import { matchSorter } from "match-sorter";
 import sortBy from "sort-by";
 
 type ContactMutation = {
-  id?: string;
+  id?: number;
   firstName?: string;
   lastName?: string;
   image?: string;
@@ -12,14 +12,14 @@ type ContactMutation = {
 };
 
 export type ContactRecord = ContactMutation & {
-  id: string;
+  id: number;
   createdAt: string;
 };
 
-const API_URL = "https://dummyjson.com/users/";
+const API_URL = "https://dummyjson.com/";
 
 async function fetchContacts(): Promise<ContactRecord[]> {
-  const response = await fetch(API_URL);
+  const response = await fetch(new URL("users", API_URL));
   if (!response.ok) {
     throw new Error(`Failed to fetch contacts: ${response.statusText}`);
   }
@@ -27,7 +27,9 @@ async function fetchContacts(): Promise<ContactRecord[]> {
   return data.users;
 }
 
-export async function getContacts(query?: string | null) {
+export async function getContacts(
+  query?: string | null
+): Promise<ContactRecord[]> {
   const contacts = await fetchContacts();
   let filteredContacts = contacts;
   if (query) {
@@ -38,13 +40,15 @@ export async function getContacts(query?: string | null) {
   return filteredContacts.sort(sortBy("lastName", "createdAt"));
 }
 
-export async function getContact(id: string) {
-  const response = await fetch(`${API_URL}/${id}`);
+export async function getContact(id: number): Promise<ContactRecord> {
+  const response = await fetch(new URL(`users/${id}`, API_URL));
   const data = await response.json();
   return data;
 }
 
-export async function createEmptyContact(contactData: ContactMutation) {
+export async function createContact(
+  contactData: ContactMutation
+): Promise<ContactRecord> {
   const response = await fetch(API_URL, {
     method: "POST",
     body: JSON.stringify(contactData),
@@ -57,7 +61,23 @@ export async function createEmptyContact(contactData: ContactMutation) {
   return await response.json();
 }
 
-export async function updateContact(id: string, updates: ContactMutation) {
+export async function createEmptyContact(): Promise<ContactRecord> {
+  const emptyContactData = {
+    firstName: "",
+    lastName: "",
+    image: "",
+    twitter: "",
+    notes: "",
+    favorite: false,
+  };
+
+  return createContact(emptyContactData);
+}
+
+export async function updateContact(
+  id: number,
+  updates: ContactMutation
+): Promise<ContactRecord> {
   const response = await fetch(`${API_URL}${id}`, {
     method: "PUT",
     body: JSON.stringify(updates),
@@ -70,7 +90,7 @@ export async function updateContact(id: string, updates: ContactMutation) {
   return await response.json();
 }
 
-export async function deleteContact(id: string) {
+export async function deleteContact(id: number): Promise<number> {
   const response = await fetch(`${API_URL}${id}`, {
     method: "DELETE",
   });
