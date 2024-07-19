@@ -45,7 +45,10 @@ export default function ContactPosts() {
         </ul>
 
         <p>
-          <button onClick={() => navigate(-1)} type="button">
+          <button
+            onClick={() => navigate(`/contacts/${contact.id}`)}
+            type="button"
+          >
             Back
           </button>
         </p>
